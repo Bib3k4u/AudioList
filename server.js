@@ -9,7 +9,7 @@ const port = 5000;
 // Use CORS middleware
 app.use(cors());
 
-// Sequelize configuration
+// Sequelize configurationkdn
 const sequelize = new Sequelize('b0pvymupamiymawgjzah', 'uufj3sf2gariapaz', 'UoWF5t3A1OZi1q5wjVVH', {
     // host: 'localhost',
     host: 'b0pvymupamiymawgjzah-mysql.services.clever-cloud.com',
