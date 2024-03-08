@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP3 Upload Demo</title>
+</head>
+<body>
+    <h1>MP3 Upload Demo</h1>
+
+    <!-- Form to upload MP3 file -->
+    <form action="/api/upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="audio" accept=".mp3">
+        <button type="submit">Upload MP3</button>
+    </form>
+
+    <hr>
+
+    <!-- Display uploaded MP3 files -->
+    <h2>Uploaded MP3 Files:</h2>
+    <ul>
+        <% audioFiles.forEach(function(file) { %>
+            <li><%= file.filename %></li>
+        <% }); %>
+    </ul>
+</body>
+</html>
