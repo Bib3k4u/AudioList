@@ -1,3 +1,5 @@
+// server.js
+
 const express = require('express');
 const multer = require('multer');
 const { Sequelize, DataTypes } = require('sequelize');
@@ -6,17 +8,15 @@ const cors = require('cors');
 const app = express();
 const port = 5000;
 
-// Use CORS middleware
+app.use(express.json());
 app.use(cors());
 
-// Sequelize configurationkdn
 const sequelize = new Sequelize('b0pvymupamiymawgjzah', 'uufj3sf2gariapaz', 'UoWF5t3A1OZi1q5wjVVH', {
     // host: 'localhost',
     host: 'b0pvymupamiymawgjzah-mysql.services.clever-cloud.com',
     dialect: 'mysql'
 });
 
-// Define Audio model
 const Audio = sequelize.define('Audio', {
     filename: {
         type: DataTypes.STRING
@@ -26,21 +26,17 @@ const Audio = sequelize.define('Audio', {
     }
 });
 
-// Synchronize the model with the database
 sequelize.sync();
 
-// Multer configuration for handling file uploads
 const upload = multer({ storage: multer.memoryStorage() });
 
-// Route for handling audio uploads
 app.post('/api/upload', upload.single('audio'), async (req, res) => {
     if (!req.file) {
         return res.status(400).json({ message: 'No file uploaded' });
     }
 
     try {
-        // Save audio file to the database
-        const savedAudio = await Audio.create({
+        await Audio.create({
             filename: req.file.originalname,
             data: req.file.buffer
         });
@@ -52,12 +48,23 @@ app.post('/api/upload', upload.single('audio'), async (req, res) => {
     }
 });
 
-// Route for fetching all audio files from the database
 app.get('/api/audio', async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
     try {
-        // Fetch all audio files from the database
-        const allAudio = await Audio.findAll();
-        res.json(allAudio);
+        const { count, rows } = await Audio.findAndCountAll({
+            offset,
+            limit
+        });
+
+        res.json({
+            totalCount: count,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page,
+            audioFiles: rows
+        });
     } catch (error) {
         console.error('Error fetching audio from database:', error);
         res.status(500).json({ message: 'Internal server error' });
@@ -70,11 +77,7 @@ app.get('/api/audio/:id', async (req, res) => {
         if (!audio) {
             return res.status(404).json({ message: 'Audio not found' });
         }
-
-        // Set the appropriate content type header for audio
         res.setHeader('Content-Type', 'audio/mpeg');
-
-        // Send the audio data back to the client
         res.send(audio.data);
     } catch (error) {
         console.error('Error fetching audio:', error);
