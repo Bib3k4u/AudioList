@@ -11,9 +11,10 @@ const port = 5000;
 app.use(express.json());
 app.use(cors());
 
-const sequelize = new Sequelize('b0pvymupamiymawgjzah', 'uufj3sf2gariapaz', 'UoWF5t3A1OZi1q5wjVVH', {
+// const sequelize = new Sequelize('audio', 'root', 'root', {
+    const sequelize = new Sequelize('bzfp7s2qx1jkwoigtbym', 'uneaqymlqtkagzqu', 'qGLSsQKJSEtuXhGXtPzT', {
     // host: 'localhost',
-    host: 'b0pvymupamiymawgjzah-mysql.services.clever-cloud.com',
+    host: 'bzfp7s2qx1jkwoigtbym-mysql.services.clever-cloud.com',
     dialect: 'mysql'
 });
 
@@ -48,29 +49,21 @@ app.post('/api/upload', upload.single('audio'), async (req, res) => {
     }
 });
 
+// Modify to return only filenames
 app.get('/api/audio', async (req, res) => {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const offset = (page - 1) * limit;
-
     try {
-        const { count, rows } = await Audio.findAndCountAll({
-            offset,
-            limit
+        const audioFiles = await Audio.findAll({
+            attributes: ['id', 'filename'] // Select only id and filename
         });
 
-        res.json({
-            totalCount: count,
-            totalPages: Math.ceil(count / limit),
-            currentPage: page,
-            audioFiles: rows
-        });
+        res.json(audioFiles);
     } catch (error) {
-        console.error('Error fetching audio from database:', error);
+        console.error('Error fetching audio filenames from database:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
 
+// Fetch song by ID when filename is clicked
 app.get('/api/audio/:id', async (req, res) => {
     try {
         const audio = await Audio.findByPk(req.params.id);
