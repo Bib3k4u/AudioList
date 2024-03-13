@@ -12,9 +12,9 @@ app.use(express.json());
 app.use(cors());
 
 // const sequelize = new Sequelize('audio', 'root', 'root', {
-    const sequelize = new Sequelize('bzfp7s2qx1jkwoigtbym', 'uneaqymlqtkagzqu', 'qGLSsQKJSEtuXhGXtPzT', {
+const sequelize = new Sequelize('bhbt8s7goi6vkhgirzkx', 'ugpm1ttvevlmtua0', 'acgdnvBjEl1RCUtq5Adh', {
     // host: 'localhost',
-    host: 'bzfp7s2qx1jkwoigtbym-mysql.services.clever-cloud.com',
+    host: 'bhbt8s7goi6vkhgirzkx-mysql.services.clever-cloud.com',
     dialect: 'mysql'
 });
 
